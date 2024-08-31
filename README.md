@@ -13,6 +13,8 @@ Some inspiration came from [gh cli](https://github.com/cli/cli)
 
 ### Configs
 
+This tool expects a file in `$XDG_CONFIG_HOME/jira-cli/config.conf` (or `~/.config/jira-cli/config.conf` if `$XDG_CONFIG_HOME` is not set)
+
 ``` launguage: conf
 [auth]
     token = "<YOUR_TOKEN>"
@@ -20,3 +22,5 @@ Some inspiration came from [gh cli](https://github.com/cli/cli)
     accountId = "<YOUR_ACCOUNT_ID>"
     email = "your@email.com"
 ```
+
+You will need to fill this up manually, for now
