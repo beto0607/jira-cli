@@ -29,7 +29,6 @@ const defaultPath = "/jira-cli/config.conf"
 func LoadConfig() *Configs {
 	baseDir := getBaseDir()
 	configFilePath := baseDir + defaultPath
-	log.Print(configFilePath)
 
 	configs, err := loadConfigFile(configFilePath)
 	if err != nil {
@@ -114,7 +113,6 @@ func parseConfigFile(scanner *bufio.Scanner) (*RawConfigs, error) {
 				continue
 			}
 
-			fmt.Println(currentGroup)
 			configMap[currentGroup] = map[string]string{}
 			continue
 		}

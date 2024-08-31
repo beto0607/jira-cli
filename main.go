@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"os"
 
 	"jira-cli/commands"
@@ -9,12 +9,12 @@ import (
 )
 
 func main() {
-	configs.LoadConfig()
-	code := mainRun()
+	configsValue := configs.LoadConfig()
+	code := mainRun(configsValue)
 	os.Exit(code)
 }
 
-func mainRun() int {
+func mainRun(configsValue *configs.Configs) int {
 	expandedArgs := []string{}
 	if len(os.Args) > 0 {
 		expandedArgs = os.Args[1:]
@@ -25,19 +25,27 @@ func mainRun() int {
 		commands.PrintHelp()
 		return 0
 	}
-
-	log.Println(len(expandedArgs))
-
-	log.Println(expandedArgs)
+	switch expandedArgs[0] {
+	case "assign":
+		break
+	case "move":
+		if !validateMoveCmd(expandedArgs) {
+			fmt.Println("'move' expectes 2 arguments: ticket and target")
+			return 2
+		}
+		return commands.DoMoveCommand(expandedArgs, configsValue)
+	default:
+		fmt.Fprintf(os.Stderr, "Unkown command\n")
+		return 1
+	}
 
 	return 0
 }
 
 func checkIfIsHelpCmd(args []string) bool {
-	for _, v := range args {
-		if v == "--help" || v == "help" {
-			return true
-		}
-	}
-	return false
+	return args[0] == "help" || args[0] == "--help"
+}
+
+func validateMoveCmd(args []string) bool {
+	return len(args) == 3
 }
