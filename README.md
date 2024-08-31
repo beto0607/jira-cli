@@ -10,7 +10,6 @@ after a first try with curl scripts, i decided to give it a try to do it in gola
 Some inspiration came from [gh cli](https://github.com/cli/cli)
 
 
-
 ### Configs
 
 This tool expects a file in `$XDG_CONFIG_HOME/jira-cli/config.conf` (or `~/.config/jira-cli/config.conf` if `$XDG_CONFIG_HOME` is not set)
@@ -24,3 +23,7 @@ This tool expects a file in `$XDG_CONFIG_HOME/jira-cli/config.conf` (or `~/.conf
 ```
 
 You will need to fill this up manually, for now
+
+- [How to get your API Token?]()
+- How to get your Account ID? Go to your profile, the URL will be something like: `https://your-project.atlassian.net/jira/people/<YOUR_ACCOUNT_ID>` <- Copy and paste it
+- How to get your email? 🤔 🤷
