@@ -11,3 +11,7 @@ func MakeItalic(content string) string {
 func MakeUndeline(content string) string {
 	return "\033[4m" + content + "\033[0m"
 }
+
+func MakeStrikethrough(content string) string {
+	return "\033[9m" + content + "\033[0m"
+}

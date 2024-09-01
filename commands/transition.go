@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"jira-cli/configs"
 	"jira-cli/http"
+	"jira-cli/models"
 	"jira-cli/utils"
 	"os"
 	"os/exec"
@@ -30,9 +31,26 @@ func RunTransitionCommand(args []string, configsValues configs.Configs) int {
 		}
 		issueId = issueIdFromBranch
 	}
+
 	targetOption := args[2]
 
+	if targetOption == "-s" || targetOption == "--search-target" {
+		transitions, err := http.RequestTransitionsList(configsValues, issueId)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			return 2
+		}
+
+		selectedTransition, err := promptTransition(transitions)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			return 2
+		}
+		targetOption = selectedTransition.Id
+	}
+
 	if http.RequestTransitionTo(configsValues, issueId, targetOption) {
+		fmt.Println("oky doky")
 		return 0
 	}
 	return 3
@@ -105,4 +123,20 @@ func parseBranchName(branchName string) (string, error) {
 	}
 	return groups[1], nil
 
+}
+
+func promptTransition(transitions *models.ListTransitionsResponse) (*models.Transition, error) {
+	options := []string{}
+
+	if len(transitions.Transitions) == 0 {
+		return nil, errors.New("No valid transitions")
+	}
+
+	for _, transition := range transitions.Transitions {
+		options = append(options, transition.Name)
+	}
+
+	selectedIndex, _ := utils.Prompt(options)
+
+	return &transitions.Transitions[selectedIndex], nil
 }
