@@ -1,7 +1,11 @@
 package commands
 
-import "log"
+import (
+	"jira-cli/configs"
+	"log"
+)
 
-func PrintHelp() {
+func RunHelpCommand(args []string, configsValues configs.Configs) int {
 	log.Println("HEEEELLLPP!!!")
+	return 0
 }

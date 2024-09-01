@@ -14,38 +14,27 @@ func main() {
 	os.Exit(code)
 }
 
-func mainRun(configsValue configs.Configs) int {
+type CommandFunc = func(args []string, configsValues configs.Configs) int
+
+var commandsMap = map[string]CommandFunc{
+	"assign":     commands.RunAssignCommand,
+	"transition": commands.RunTransitionCommand,
+	"--help":     commands.RunHelpCommand,
+	"help":       commands.RunHelpCommand,
+}
+
+func mainRun(configsValues configs.Configs) int {
 	expandedArgs := []string{}
 	if len(os.Args) > 0 {
 		expandedArgs = os.Args[1:]
 	}
 
-	isHelp := checkIfIsHelpCmd(expandedArgs)
-	if isHelp {
-		commands.PrintHelp()
-		return 0
-	}
-	switch expandedArgs[0] {
-	case "assign":
-		break
-	case "move":
-		if !validateMoveCmd(expandedArgs) {
-			fmt.Println("'move' expectes 2 arguments: ticket and target")
-			return 2
-		}
-		return commands.DoMoveCommand(expandedArgs, configsValue)
-	default:
-		fmt.Fprintf(os.Stderr, "Unkown command\n")
+	currentCommand := expandedArgs[0]
+	if commandsMap[currentCommand] == nil {
+		fmt.Fprintf(os.Stderr, `Unkown command "%s"\n`, currentCommand)
 		return 1
 	}
 
-	return 0
-}
-
-func checkIfIsHelpCmd(args []string) bool {
-	return args[0] == "help" || args[0] == "--help"
-}
-
-func validateMoveCmd(args []string) bool {
-	return len(args) == 3
+	r := commandsMap[currentCommand](expandedArgs, configsValues)
+	return r
 }

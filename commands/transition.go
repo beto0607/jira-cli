@@ -5,7 +5,7 @@ import (
 	"jira-cli/http"
 )
 
-func DoMoveCommand(args []string, configsValues configs.Configs) int {
+func RunTransitionCommand(args []string, configsValues configs.Configs) int {
 	issueId := args[1]
 	targetStatus := args[2]
 
