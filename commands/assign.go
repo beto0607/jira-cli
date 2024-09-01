@@ -65,7 +65,7 @@ func printAssignHelp() {
 	fmt.Println(utils.MakeBold("Usage:"))
 
 	fmt.Println("\tjira-cli assign \t<issueId | --git-branch | -g>")
-	fmt.Println("\t\t\t\t<assignee | --search | -s | --me | --no-one>")
+	fmt.Println("\t\t\t\t<accountId | --search | -s | --me | --no-one>")
 
 	fmt.Println(utils.MakeBold("Flags:"))
 
