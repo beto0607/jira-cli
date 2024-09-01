@@ -8,26 +8,24 @@ import (
 	"jira-cli/models"
 	"jira-cli/utils"
 	"os"
-	"os/exec"
-	"regexp"
 )
 
 func RunTransitionCommand(args []string, configsValues configs.Configs) int {
-	if shouldPrintHelp(args) {
-		printHelp()
+	if utils.ShouldPrintHelp(args) {
+		printTransitionsHelp()
 		return 0
 	}
 	if len(args) != 3 {
-		printHelp()
+		printTransitionsHelp()
 		return 1
 	}
 
 	issueId := args[1]
 	if issueId == "-g" || issueId == "--git-branch" {
-		issueIdFromBranch, err := getIssueIdFromBranch()
+		issueIdFromBranch, err := utils.GetIssueIdFromBranch()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
-			return 2
+			return 1
 		}
 		issueId = issueIdFromBranch
 	}
@@ -38,35 +36,27 @@ func RunTransitionCommand(args []string, configsValues configs.Configs) int {
 		transitions, err := http.RequestTransitionsList(configsValues, issueId)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
-			return 2
+			return 1
 		}
 
-		selectedTransition, err := promptTransition(transitions)
+		selectedTransition, err := selectTransition(transitions)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
-			return 2
+			return 1
 		}
 		targetOption = selectedTransition.Id
 	}
 
-	if http.RequestTransitionTo(configsValues, issueId, targetOption) {
-		fmt.Println("oky doky")
-		return 0
+	_, err := http.RequestTransitionTo(configsValues, issueId, targetOption)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		return 1
 	}
-	return 3
+	fmt.Println("oky doky")
+	return 0
 }
 
-func shouldPrintHelp(args []string) bool {
-	for _, v := range args {
-		if v == "--help" || v == "help" {
-			return true
-		}
-	}
-
-	return false
-}
-
-func printHelp() {
+func printTransitionsHelp() {
 	fmt.Println("Transition issues (aka, move tickets around)")
 
 	fmt.Println(utils.MakeBold("Usage:"))
@@ -89,43 +79,7 @@ func printHelp() {
 	fmt.Println("")
 }
 
-func getIssueIdFromBranch() (string, error) {
-	branchName, err := getBranchName()
-	if err != nil {
-		return "", err
-	}
-	fmt.Println("BranchName: " + branchName)
-	issueId, err := parseBranchName(branchName)
-	if err != nil {
-		return "", err
-	}
-	fmt.Println("IssueId: " + issueId)
-	return issueId, nil
-}
-
-func getBranchName() (string, error) {
-	cmd := exec.Command("git", "branch", "--show-current")
-	out, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-	return string(out), nil
-}
-
-func parseBranchName(branchName string) (string, error) {
-	r, err := regexp.Compile(`(?P<section>[A-Z]{2,6}-[0-9]+)`)
-	if err != nil {
-		return "", err
-	}
-	groups := r.FindStringSubmatch(branchName)
-	if len(groups) != 2 {
-		return "", errors.New("Could not find a Jira ticket in branch (remember it's case sensitive)")
-	}
-	return groups[1], nil
-
-}
-
-func promptTransition(transitions *models.ListTransitionsResponse) (*models.Transition, error) {
+func selectTransition(transitions *models.ListTransitionsResponse) (*models.Transition, error) {
 	options := []string{}
 
 	if len(transitions.Transitions) == 0 {
@@ -136,7 +90,7 @@ func promptTransition(transitions *models.ListTransitionsResponse) (*models.Tran
 		options = append(options, transition.Name)
 	}
 
-	selectedIndex, _ := utils.Prompt(options)
+	selectedIndex, _ := utils.Select(options)
 
 	return &transitions.Transitions[selectedIndex], nil
 }
