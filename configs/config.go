@@ -2,6 +2,7 @@ package configs
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -12,21 +13,25 @@ import (
 type RawConfigs map[string]map[string]string
 
 type Configs struct {
-	auth AuthConfig
-	user UserConfig
+	Auth AuthConfig
+	User UserConfig
+	Jira JiraConfig
 }
 
 type AuthConfig struct {
-	token string
+	Token string
 }
 type UserConfig struct {
-	email     string
-	accountId string
+	Email     string
+	AccountId string
+}
+type JiraConfig struct {
+	Organization string
 }
 
 const defaultPath = "/jira-cli/config.conf"
 
-func LoadConfig() *Configs {
+func LoadConfig() Configs {
 	baseDir := getBaseDir()
 	configFilePath := baseDir + defaultPath
 
@@ -35,7 +40,7 @@ func LoadConfig() *Configs {
 		log.Panic("Error while loading configs")
 	}
 
-	return configs
+	return *configs
 }
 
 func getBaseDir() string {
@@ -74,13 +79,17 @@ func loadConfigFile(filePath string) (*Configs, error) {
 
 func convertMapToConfigs(configsMap *RawConfigs) *Configs {
 	configs := Configs{
-		auth: AuthConfig{},
-		user: UserConfig{},
+		Auth: AuthConfig{},
+		User: UserConfig{},
+		Jira: JiraConfig{},
 	}
 
-	configs.auth.token = (*configsMap)["auth"]["token"]
-	configs.user.email = (*configsMap)["user"]["email"]
-	configs.user.accountId = (*configsMap)["user"]["accountId"]
+	configs.Auth.Token = (*configsMap)["auth"]["token"]
+
+	configs.User.Email = (*configsMap)["user"]["email"]
+	configs.User.AccountId = (*configsMap)["user"]["accountId"]
+
+	configs.Jira.Organization = (*configsMap)["jira"]["organization"]
 
 	return &configs
 }
@@ -100,18 +109,12 @@ func parseConfigFile(scanner *bufio.Scanner) (*RawConfigs, error) {
 		}
 		r, err := regexp.Compile(`\[(?P<section>\w+)\]`)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Could not compile regex: %s", err.Error())
 			return nil, err
 		}
 		groups := r.FindStringSubmatch(trimmedLine)
 
 		if len(groups) == 2 {
 			currentGroup = strings.ToLower(groups[1])
-
-			// ignore unkown sections
-			if currentGroup != "auth" && currentGroup != "user" {
-				continue
-			}
 
 			configMap[currentGroup] = map[string]string{}
 			continue
@@ -123,6 +126,11 @@ func parseConfigFile(scanner *bufio.Scanner) (*RawConfigs, error) {
 		}
 		optionKey := strings.TrimSpace(values[0])
 		optionValue := strings.TrimSpace(strings.Join(values[1:], "="))
+
+		if configMap[currentGroup] == nil {
+			return nil, errors.New("There's an error in your config file")
+		}
+
 		configMap[currentGroup][optionKey] = strings.Trim(optionValue, `"`)
 	}
 

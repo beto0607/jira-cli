@@ -1,15 +1,16 @@
 package commands
 
 import (
-	"fmt"
 	"jira-cli/configs"
+	"jira-cli/http"
 )
 
-func DoMoveCommand(args []string, configsValus *configs.Configs) int {
+func DoMoveCommand(args []string, configsValues configs.Configs) int {
 	issueId := args[1]
 	targetStatus := args[2]
 
-	fmt.Printf("Jira ticket: %s\n", issueId)
-	fmt.Printf("Transition target: %s\n", targetStatus)
-	return 0
+	if http.RequestTransitionTo(configsValues, issueId, targetStatus) {
+		return 0
+	}
+	return 3
 }

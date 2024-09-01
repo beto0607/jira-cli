@@ -14,7 +14,7 @@ func main() {
 	os.Exit(code)
 }
 
-func mainRun(configsValue *configs.Configs) int {
+func mainRun(configsValue configs.Configs) int {
 	expandedArgs := []string{}
 	if len(os.Args) > 0 {
 		expandedArgs = os.Args[1:]
