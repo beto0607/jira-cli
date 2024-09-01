@@ -1,6 +1,8 @@
 package commands
 
-func DoAssign() int {
+import "jira-cli/configs"
+
+func RunAssignCommand(args []string, configsValues configs.Configs) int {
 
 	return 0
 }
