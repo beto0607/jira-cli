@@ -8,8 +8,10 @@ import (
 )
 
 const jiraRestV3 = "https://{organization}.atlassian.net/rest/api/3"
+
 const transitionSuffix = "/issue/{issueId}/transitions"
 const assigneeSuffix = "/issue/{issueId}/assignee"
+const assignableUserSuffix = "/user/assignable/search?query={query}&issueKey={issueId}"
 
 func prepareHeaders(authorizationHeader string, req *http.Request) {
 	req.Header.Add("Authorization", authorizationHeader)
@@ -36,6 +38,14 @@ func getTransitionUrl(organizationName string, issueId string) string {
 func getChangeAssigneeUrl(organizationName string, issueId string) string {
 	url := getBaseUrl(organizationName)
 	urlSuffix := strings.Replace(assigneeSuffix, "{issueId}", issueId, 1)
+	fullUrl := url + urlSuffix
+	return fullUrl
+}
+
+func getAssignableUserUrl(organizationName string, issueId string, query string) string {
+	url := getBaseUrl(organizationName)
+	urlSuffix := strings.Replace(assignableUserSuffix, "{issueId}", issueId, 1)
+	urlSuffix = strings.Replace(urlSuffix, "{query}", query, 1)
 	fullUrl := url + urlSuffix
 	return fullUrl
 }

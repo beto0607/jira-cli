@@ -102,3 +102,37 @@ func RequestChangeAssignee(configsValues configs.Configs, issueId string, accoun
 	}
 	return false, fmt.Errorf("Jira didn't like that. Returned: %s", response.Status)
 }
+
+func RequestQueryAssignableUser(configsValues configs.Configs, issueId string, query string) ([]models.AssignableUser, error) {
+	url := getAssignableUserUrl(configsValues.Jira.Organization, issueId, query)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	authorizationHeader := getAuthorizationToken(configsValues)
+
+	prepareHeaders(authorizationHeader, req)
+
+	client := &http.Client{}
+
+	response, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer response.Body.Close()
+	body, err := io.ReadAll(response.Body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var assignableUserResponse []models.AssignableUser
+	err = json.Unmarshal([]byte(body), &assignableUserResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return assignableUserResponse, nil
+}

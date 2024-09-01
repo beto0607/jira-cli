@@ -39,7 +39,7 @@ func RunTransitionCommand(args []string, configsValues configs.Configs) int {
 			return 1
 		}
 
-		selectedTransition, err := promptTransition(transitions)
+		selectedTransition, err := selectTransition(transitions)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			return 1
@@ -79,7 +79,7 @@ func printTransitionsHelp() {
 	fmt.Println("")
 }
 
-func promptTransition(transitions *models.ListTransitionsResponse) (*models.Transition, error) {
+func selectTransition(transitions *models.ListTransitionsResponse) (*models.Transition, error) {
 	options := []string{}
 
 	if len(transitions.Transitions) == 0 {
@@ -90,7 +90,7 @@ func promptTransition(transitions *models.ListTransitionsResponse) (*models.Tran
 		options = append(options, transition.Name)
 	}
 
-	selectedIndex, _ := utils.Prompt(options)
+	selectedIndex, _ := utils.Select(options)
 
 	return &transitions.Transitions[selectedIndex], nil
 }

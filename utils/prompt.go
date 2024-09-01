@@ -9,7 +9,7 @@ import (
 )
 
 // returns index and item
-func Prompt(options []string) (int, string) {
+func Select(options []string) (int, string) {
 
 	reader := bufio.NewReader(os.Stdin)
 	for index, option := range options {
@@ -25,8 +25,16 @@ func Prompt(options []string) (int, string) {
 	if err != nil || selectedOption-1 < 0 || selectedOption-1 > len(options) {
 		fmt.Println("Invalid option")
 		fmt.Println(err.Error())
-		return Prompt(options)
+		return Select(options)
 	}
 
 	return selectedOption - 1, options[selectedOption-1]
+}
+
+func PromptQuery(queryText string) string {
+	fmt.Println(queryText)
+	reader := bufio.NewReader(os.Stdin)
+	input, _ := reader.ReadString('\n')
+	input = strings.Split(input, "\n")[0]
+	return input
 }
