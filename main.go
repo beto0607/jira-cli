@@ -9,6 +9,10 @@ import (
 )
 
 func main() {
+	argsValid := checkArgs(os.Args)
+	if argsValid != 0 {
+		os.Exit(argsValid)
+	}
 	configsValue := configs.LoadConfig()
 	code := mainRun(configsValue)
 	os.Exit(code)
@@ -21,6 +25,14 @@ var commandsMap = map[string]CommandFunc{
 	"transition": commands.RunTransitionCommand,
 	"--help":     commands.RunHelpCommand,
 	"help":       commands.RunHelpCommand,
+}
+
+func checkArgs(args []string) int {
+	if len(args) < 2 {
+		return 1
+	}
+
+	return 0
 }
 
 func mainRun(configsValues configs.Configs) int {
