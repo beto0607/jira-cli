@@ -9,6 +9,19 @@ I got tired of creating a branch, start working on it and realize that I never m
 After a first try with curl scripts, I decided to give it a try to do it in GoLang.
 Some inspiration came from [gh cli](https://github.com/cli/cli)
 
+### Build&Install
+
+#### Requires:
+
+* [Go](https://go.dev/dl/) version 1.23
+
+#### Build
+
+* `make build`
+
+#### Install
+
+* `make install`
 
 ### Configs
 
@@ -20,9 +33,11 @@ This tool expects a file in `$XDG_CONFIG_HOME/jira-cli/config.conf` (or `~/.conf
 [user]
     accountId = "<YOUR_ACCOUNT_ID>"
     email = "your@email.com"
+[jira]
+    organization = "<YOUR_ORGANIZATION>"
 ```
 
-You will need to fill this up manually, for now
+Use `jira-cli config set ...` for updating your configurations
 
 - [How to get your API Token?]()
 - How to get your Account ID? Go to your profile, the URL will be something like: `https://your-project.atlassian.net/jira/people/<YOUR_ACCOUNT_ID>` <- Copy and paste it
