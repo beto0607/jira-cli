@@ -19,9 +19,12 @@ func RunTransitionCommand(args []string, configsValues configs.Configs) int {
 		printTransitionsHelp()
 		return 1
 	}
+	arguments := utils.FilterFlags(args)
 
-	issueId := args[1]
-	if issueId == "-g" || issueId == "--git-branch" {
+	issueId := arguments[1]
+	targetOption := arguments[2]
+	if utils.IsFlagInArgs(args, "-g") || utils.IsFlagInArgs(args, "--git-branch") {
+		targetOption = arguments[1]
 		issueIdFromBranch, err := utils.GetIssueIdFromBranch()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
@@ -30,9 +33,7 @@ func RunTransitionCommand(args []string, configsValues configs.Configs) int {
 		issueId = issueIdFromBranch
 	}
 
-	targetOption := args[2]
-
-	if targetOption == "-s" || targetOption == "--search-target" {
+	if utils.IsFlagInArgs(args, "-s") || utils.IsFlagInArgs(args, "--search-target") {
 		transitions, err := http.RequestTransitionsList(configsValues, issueId)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
