@@ -20,9 +20,12 @@ func RunAssignCommand(args []string, configsValues configs.Configs) int {
 		printAssignHelp()
 		return 1
 	}
+	arguments := utils.FilterFlags(args)
 
-	issueId := args[1]
-	if issueId == "-g" || issueId == "--git-branch" {
+	issueId := arguments[1]
+	assigneeOption := arguments[2]
+	if utils.IsFlagInArgs(args, "-g") || utils.IsFlagInArgs(args, "--git-branch") {
+		assigneeOption = arguments[1]
 		issueIdFromBranch, err := utils.GetIssueIdFromBranch()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
@@ -31,13 +34,11 @@ func RunAssignCommand(args []string, configsValues configs.Configs) int {
 		issueId = issueIdFromBranch
 	}
 
-	assigneeOption := args[2]
-	if assigneeOption == "--me" {
+	if utils.IsFlagInArgs(args, "--me") {
 		assigneeOption = configsValues.User.AccountId
-	} else if assigneeOption == "--no-one" {
+	} else if utils.IsFlagInArgs(args, "--no-one") {
 		assigneeOption = ""
-	} else if assigneeOption == "-s" || assigneeOption == "--search" {
-
+	} else if utils.IsFlagInArgs(args, "-s") || utils.IsFlagInArgs(args, "--search") {
 		selectedAssignee, err := promptAssignee(configsValues, issueId)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
@@ -47,7 +48,6 @@ func RunAssignCommand(args []string, configsValues configs.Configs) int {
 		if selectedAssignee != nil {
 			assigneeOption = selectedAssignee.AccountId
 		}
-
 	}
 
 	_, err := http.RequestChangeAssignee(configsValues, issueId, assigneeOption)
