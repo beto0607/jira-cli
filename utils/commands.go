@@ -8,13 +8,7 @@ import (
 )
 
 func ShouldPrintHelp(args []string) bool {
-	for _, v := range args {
-		if v == "--help" || v == "help" {
-			return true
-		}
-	}
-
-	return false
+	return IsFlagInArgs(args, "--help") || IsFlagInArgs(args, "help")
 }
 
 func GetIssueIdFromBranch() (string, error) {

@@ -10,37 +10,33 @@ import (
 	"strings"
 )
 
-type RawConfigs map[string]map[string]string
-
-type Configs struct {
-	Auth AuthConfig
-	User UserConfig
-	Jira JiraConfig
-}
-
-type AuthConfig struct {
-	Token string
-}
-type UserConfig struct {
-	Email     string
-	AccountId string
-}
-type JiraConfig struct {
-	Organization string
-}
-
-const defaultPath = "/jira-cli/config.conf"
-
 func LoadConfig() Configs {
+	rawConfigs := getRawConfigs()
+	configs := convertMapToConfigs(rawConfigs)
+	return *configs
+}
+
+func GetRawValue(section string, settingName string) (value string, found bool) {
+	rawConfigs := getRawConfigs()
+
+	sectionMap := (*rawConfigs)[section]
+	if sectionMap != nil {
+		rawValue, ok := sectionMap[settingName]
+		return rawValue, ok
+	}
+	return "", false
+}
+
+func getRawConfigs() *RawConfigs {
 	baseDir := getBaseDir()
 	configFilePath := baseDir + defaultPath
 
-	configs, err := loadConfigFile(configFilePath)
+	rawConfigs, err := loadConfigFile(configFilePath)
 	if err != nil {
 		log.Panic("Error while loading configs")
 	}
+	return rawConfigs
 
-	return *configs
 }
 
 func getBaseDir() string {
@@ -55,7 +51,7 @@ func getBaseDir() string {
 	return baseDir
 }
 
-func loadConfigFile(filePath string) (*Configs, error) {
+func loadConfigFile(filePath string) (*RawConfigs, error) {
 	f, err := os.Open(filePath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Could not open file: %s", err.Error())
@@ -72,9 +68,7 @@ func loadConfigFile(filePath string) (*Configs, error) {
 		return nil, err
 	}
 
-	configs := convertMapToConfigs(configMap)
-
-	return configs, nil
+	return configMap, nil
 }
 
 func convertMapToConfigs(configsMap *RawConfigs) *Configs {
@@ -99,6 +93,11 @@ func parseConfigFile(scanner *bufio.Scanner) (*RawConfigs, error) {
 
 	var currentGroup string = ""
 
+	r, err := regexp.Compile(`\[(?P<section>\w+)\]`)
+	if err != nil {
+		return nil, err
+	}
+
 	for scanner.Scan() {
 		line := scanner.Text()
 		trimmedLine := strings.TrimSpace(line)
@@ -106,10 +105,6 @@ func parseConfigFile(scanner *bufio.Scanner) (*RawConfigs, error) {
 		// ignore commentes or empty lines
 		if len(trimmedLine) == 0 || trimmedLine[0] == '#' {
 			continue
-		}
-		r, err := regexp.Compile(`\[(?P<section>\w+)\]`)
-		if err != nil {
-			return nil, err
 		}
 		groups := r.FindStringSubmatch(trimmedLine)
 
