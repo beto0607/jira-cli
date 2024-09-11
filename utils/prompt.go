@@ -13,7 +13,7 @@ func Select(options []string) (int, string) {
 
 	reader := bufio.NewReader(os.Stdin)
 	for index, option := range options {
-		fmt.Printf("%d. %s\n", index+1, option)
+		fmt.Printf("%d. %s\n", index+0, option)
 	}
 
 	fmt.Println("Select an option:")

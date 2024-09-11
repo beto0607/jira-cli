@@ -23,7 +23,12 @@ func RunAssignCommand(args []string, configsValues configs.Configs) int {
 	arguments := utils.FilterFlags(args)
 
 	issueId := arguments[1]
-	assigneeOption := arguments[2]
+
+	assigneeOption := ""
+	if len(arguments) > 2 {
+		assigneeOption = arguments[2]
+	}
+
 	if utils.IsFlagInArgs(args, "-g") || utils.IsFlagInArgs(args, "--git-branch") {
 		assigneeOption = arguments[1]
 		issueIdFromBranch, err := utils.GetIssueIdFromBranch()
@@ -111,9 +116,16 @@ func promptAssignee(configsValues configs.Configs, issueId string) (*models.Assi
 		for _, assignableUser := range listAssignableUsers {
 			options = append(options, assignableUser.DisplayName+"-"+assignableUser.EmailAddress)
 		}
-
-		selectedIndex, _ := utils.Select(options)
-		if selectedIndex == 0 {
+		var selectedIndex int
+		if configsValues.Fzf.Enabled {
+			selectedIndex, _, err = utils.FzfSelect(options)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			selectedIndex, _ = utils.Select(options)
+		}
+		if selectedIndex <= 0 {
 			// Search again
 			continue
 		}
