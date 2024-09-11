@@ -22,21 +22,19 @@ func RunAssignCommand(args []string, configsValues configs.Configs) int {
 	}
 	arguments := utils.FilterFlags(args)
 
-	issueId := arguments[1]
-
-	assigneeOption := ""
-	if len(arguments) > 2 {
-		assigneeOption = arguments[2]
-	}
+	var issueId string
+	var assigneeOption string
 
 	if utils.IsFlagInArgs(args, "-g") || utils.IsFlagInArgs(args, "--git-branch") {
-		assigneeOption = arguments[1]
 		issueIdFromBranch, err := utils.GetIssueIdFromBranch()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			return 1
 		}
 		issueId = issueIdFromBranch
+	} else {
+		issueId = arguments[0]
+		arguments = arguments[1:]
 	}
 
 	if utils.IsFlagInArgs(args, "--me") {
@@ -53,6 +51,8 @@ func RunAssignCommand(args []string, configsValues configs.Configs) int {
 		if selectedAssignee != nil {
 			assigneeOption = selectedAssignee.AccountId
 		}
+	} else {
+		assigneeOption = arguments[0]
 	}
 
 	_, err := http.RequestChangeAssignee(configsValues, issueId, assigneeOption)
