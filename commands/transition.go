@@ -22,7 +22,10 @@ func RunTransitionCommand(args []string, configsValues configs.Configs) int {
 	arguments := utils.FilterFlags(args)
 
 	issueId := arguments[1]
-	targetOption := arguments[2]
+	targetOption := ""
+	if len(arguments) > 3 {
+		targetOption = arguments[2]
+	}
 	if utils.IsFlagInArgs(args, "-g") || utils.IsFlagInArgs(args, "--git-branch") {
 		targetOption = arguments[1]
 		issueIdFromBranch, err := utils.GetIssueIdFromBranch()
@@ -40,7 +43,7 @@ func RunTransitionCommand(args []string, configsValues configs.Configs) int {
 			return 1
 		}
 
-		selectedTransition, err := selectTransition(transitions)
+		selectedTransition, err := selectTransition(transitions, configsValues.Fzf.Enabled)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			return 1
@@ -80,7 +83,7 @@ func printTransitionsHelp() {
 	fmt.Println("")
 }
 
-func selectTransition(transitions *models.ListTransitionsResponse) (*models.Transition, error) {
+func selectTransition(transitions *models.ListTransitionsResponse, useFzf bool) (*models.Transition, error) {
 	options := []string{}
 
 	if len(transitions.Transitions) == 0 {
@@ -91,7 +94,17 @@ func selectTransition(transitions *models.ListTransitionsResponse) (*models.Tran
 		options = append(options, transition.Name)
 	}
 
-	selectedIndex, _ := utils.Select(options)
+	if !useFzf {
+		selectedIndex, _ := utils.Select(options)
+		return &transitions.Transitions[selectedIndex], nil
+
+	}
+
+	selectedIndex, _, err := utils.FzfSelect(options)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return &transitions.Transitions[selectedIndex], nil
 }

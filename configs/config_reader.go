@@ -76,6 +76,9 @@ func convertMapToConfigs(configsMap *RawConfigs) *Configs {
 		Auth: AuthConfig{},
 		User: UserConfig{},
 		Jira: JiraConfig{},
+		Fzf: FzfConfig{
+			Enabled: false,
+		},
 	}
 
 	configs.Auth.Token = (*configsMap)["auth"]["token"]
@@ -84,6 +87,8 @@ func convertMapToConfigs(configsMap *RawConfigs) *Configs {
 	configs.User.AccountId = (*configsMap)["user"]["accountId"]
 
 	configs.Jira.Organization = (*configsMap)["jira"]["organization"]
+
+	configs.Fzf.Enabled = (*configsMap)["fzf"] != nil && (*configsMap)["fzf"]["enabled"] == "on"
 
 	return &configs
 }

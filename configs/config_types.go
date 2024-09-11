@@ -6,6 +6,7 @@ type Configs struct {
 	Auth AuthConfig
 	User UserConfig
 	Jira JiraConfig
+	Fzf  FzfConfig
 }
 
 type AuthConfig struct {
@@ -17,6 +18,9 @@ type UserConfig struct {
 }
 type JiraConfig struct {
 	Organization string
+}
+type FzfConfig struct {
+	Enabled bool
 }
 
 const defaultPath = "/jira-cli/config.conf"
