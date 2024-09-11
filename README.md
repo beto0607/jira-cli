@@ -39,6 +39,12 @@ This tool expects a file in `$XDG_CONFIG_HOME/jira-cli/config.conf` (or `~/.conf
 
 Use `jira-cli config set ...` for updating your configurations
 
-- [How to get your API Token?]()
+- [How to get your API Token?](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/)
 - How to get your Account ID? Go to your profile, the URL will be something like: `https://your-project.atlassian.net/jira/people/<YOUR_ACCOUNT_ID>` <- Copy and paste it
 - How to get your email? 🤔 🤷
+
+### FZF
+
+You can use [fzf](https://github.com/junegunn/fzf) for searching, for example, transitions or assignees. If disabled, it will use some custom prompting.
+
+Enable by running `jira-cli config set fzf.enabled on`.
