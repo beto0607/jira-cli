@@ -94,17 +94,17 @@ func selectTransition(transitions *models.ListTransitionsResponse, useFzf bool) 
 		options = append(options, transition.Name)
 	}
 
-	if useFzf {
-		selectedIndex, _, err := utils.FzfSelect(options)
-
-		if err != nil {
-			return nil, err
-		}
-
+	if !useFzf {
+		selectedIndex, _ := utils.Select(options)
 		return &transitions.Transitions[selectedIndex], nil
+
 	}
 
-	selectedIndex, _ := utils.Select(options)
+	selectedIndex, _, err := utils.FzfSelect(options)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return &transitions.Transitions[selectedIndex], nil
 }
