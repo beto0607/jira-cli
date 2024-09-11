@@ -35,6 +35,10 @@ This tool expects a file in `$XDG_CONFIG_HOME/jira-cli/config.conf` (or `~/.conf
     email = "your@email.com"
 [jira]
     organization = "<YOUR_ORGANIZATION>"
+[fzf]
+    enabled = "<on |off>"
+[alias]
+    test = "transition -g -s"
 ```
 
 Use `jira-cli config set ...` for updating your configurations
