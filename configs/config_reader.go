@@ -10,23 +10,6 @@ import (
 	"strings"
 )
 
-func LoadConfig() Configs {
-	rawConfigs := getRawConfigs()
-	configs := convertMapToConfigs(rawConfigs)
-	return *configs
-}
-
-func GetRawValue(section string, settingName string) (value string, found bool) {
-	rawConfigs := getRawConfigs()
-
-	sectionMap := (*rawConfigs)[section]
-	if sectionMap != nil {
-		rawValue, ok := sectionMap[settingName]
-		return rawValue, ok
-	}
-	return "", false
-}
-
 func getRawConfigs() *RawConfigs {
 	baseDir := getBaseDir()
 	configFilePath := baseDir + defaultPath
@@ -69,28 +52,6 @@ func loadConfigFile(filePath string) (*RawConfigs, error) {
 	}
 
 	return configMap, nil
-}
-
-func convertMapToConfigs(configsMap *RawConfigs) *Configs {
-	configs := Configs{
-		Auth: AuthConfig{},
-		User: UserConfig{},
-		Jira: JiraConfig{},
-		Fzf: FzfConfig{
-			Enabled: false,
-		},
-	}
-
-	configs.Auth.Token = (*configsMap)["auth"]["token"]
-
-	configs.User.Email = (*configsMap)["user"]["email"]
-	configs.User.AccountId = (*configsMap)["user"]["accountId"]
-
-	configs.Jira.Organization = (*configsMap)["jira"]["organization"]
-
-	configs.Fzf.Enabled = (*configsMap)["fzf"] != nil && (*configsMap)["fzf"]["enabled"] == "on"
-
-	return &configs
 }
 
 func parseConfigFile(scanner *bufio.Scanner) (*RawConfigs, error) {

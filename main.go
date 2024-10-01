@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"jira-cli/commands"
 	"jira-cli/configs"
@@ -32,17 +33,22 @@ func checkArgs(args []string) int {
 	if len(args) < 2 {
 		return 1
 	}
-
 	return 0
 }
 
 func mainRun(configsValues configs.Configs) int {
-	expandedArgs := []string{}
-	if len(os.Args) > 0 {
-		expandedArgs = os.Args[1:]
+	expandedArgs := os.Args[1:]
+	currentCommand := expandedArgs[0]
+
+	val, ok := configsValues.Alias[currentCommand]
+	if ok {
+		originalCmd := strings.Split(val, " ")
+
+		expandedArgs = append(originalCmd, expandedArgs[1:]...)
+		currentCommand = expandedArgs[0]
+		fmt.Printf("new command %s\n", strings.Join(expandedArgs, " "))
 	}
 
-	currentCommand := expandedArgs[0]
 	if commandsMap[currentCommand] == nil {
 		fmt.Fprintf(os.Stderr, `Unkown command "%s"\n`, currentCommand)
 		return 1
