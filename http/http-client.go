@@ -136,3 +136,7 @@ func RequestQueryAssignableUser(configsValues configs.Configs, issueId string, q
 
 	return assignableUserResponse, nil
 }
+
+func RequestGetIssue(configsValues configs.Configs, issueId string, query string) (models.Transition, error) {
+
+}

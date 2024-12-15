@@ -27,6 +27,7 @@ var commandsMap = map[string]CommandFunc{
 	"--help":     commands.RunHelpCommand,
 	"help":       commands.RunHelpCommand,
 	"config":     commands.RunConfigCommand,
+	"issue":      commands.RunIssueCommand,
 }
 
 func checkArgs(args []string) int {
