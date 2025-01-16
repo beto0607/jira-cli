@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+const jiraBrowseUrl = "https://{organization}.atlassian.net/browse/{issueId}"
+
 const jiraRestV3 = "https://{organization}.atlassian.net/rest/api/3"
 
 const transitionSuffix = "/issue/{issueId}/transitions"
@@ -48,4 +50,9 @@ func getAssignableUserUrl(organizationName string, issueId string, query string)
 	urlSuffix = strings.Replace(urlSuffix, "{query}", query, 1)
 	fullUrl := url + urlSuffix
 	return fullUrl
+}
+
+func GetBrowseUrl(organizationName string, issueId string) string {
+	url := strings.Replace(jiraBrowseUrl, "{organization}", organizationName, 1)
+	return strings.Replace(url, "{issueId}", issueId, 1)
 }
