@@ -92,13 +92,12 @@ func selectTransition(transitions *models.ListTransitionsResponse, useFzf bool) 
 	}
 
 	for _, transition := range transitions.Transitions {
-		options = append(options, transition.Name)
+		options = append(options, transition.Name+"(Id:"+transition.Id+")")
 	}
 
 	if !useFzf {
 		selectedIndex, _ := utils.Select(options)
 		return &transitions.Transitions[selectedIndex], nil
-
 	}
 
 	selectedIndex, _, err := utils.FzfSelect(options)
