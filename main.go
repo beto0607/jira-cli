@@ -22,11 +22,12 @@ func main() {
 type CommandFunc = func(args []string, configsValues configs.Configs) int
 
 var commandsMap = map[string]CommandFunc{
-	"assign":     commands.RunAssignCommand,
-	"transition": commands.RunTransitionCommand,
 	"--help":     commands.RunHelpCommand,
-	"help":       commands.RunHelpCommand,
+	"assign":     commands.RunAssignCommand,
 	"config":     commands.RunConfigCommand,
+	"help":       commands.RunHelpCommand,
+	"navigate":   commands.RunNavigateCommand,
+	"transition": commands.RunTransitionCommand,
 }
 
 func checkArgs(args []string) int {
