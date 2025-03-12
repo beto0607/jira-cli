@@ -22,6 +22,7 @@ func UpdateConfigs(section string, settingName string, value string, dryRun bool
 	newContent := ""
 	currentGroup := ""
 	sectionFound := false
+	newSettingAdded := false
 
 	r, err := regexp.Compile(`\[(?P<section>\w+)\]`)
 	if err != nil {
@@ -61,10 +62,15 @@ func UpdateConfigs(section string, settingName string, value string, dryRun bool
 		}
 		newLine := fmt.Sprintf("    %s = \"%s\"\n", settingName, value)
 		newContent += newLine
+		newSettingAdded = true
 	}
 	// group not found
 	if !sectionFound {
 		newContent += fmt.Sprintf("[%s]\n", section)
+		newLine := fmt.Sprintf("    %s = \"%s\"\n", settingName, value)
+		newContent += newLine
+	}
+	if sectionFound && !newSettingAdded {
 		newLine := fmt.Sprintf("    %s = \"%s\"\n", settingName, value)
 		newContent += newLine
 	}

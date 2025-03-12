@@ -25,6 +25,7 @@ var commandsMap = map[string]CommandFunc{
 	"--help":     commands.RunHelpCommand,
 	"assign":     commands.RunAssignCommand,
 	"config":     commands.RunConfigCommand,
+	"current":    commands.RunCurrentWorkCommand,
 	"help":       commands.RunHelpCommand,
 	"navigate":   commands.RunNavigateCommand,
 	"transition": commands.RunTransitionCommand,
@@ -39,6 +40,7 @@ func checkArgs(args []string) int {
 
 func mainRun(configsValues configs.Configs) int {
 	expandedArgs := os.Args[1:]
+	fmt.Println(expandedArgs[0])
 	currentCommand := expandedArgs[0]
 
 	val, ok := configsValues.Alias[currentCommand]

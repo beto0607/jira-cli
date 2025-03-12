@@ -18,11 +18,12 @@ func GetRawValue(section string, settingName string) (value string, found bool) 
 
 func convertMapToConfigs(configsMap *RawConfigs) *Configs {
 	return &Configs{
-		Auth:  *assignAuth(configsMap),
-		User:  *assignUser(configsMap),
-		Jira:  *assignJira(configsMap),
-		Fzf:   *assignFzf(configsMap),
 		Alias: *assignAlias(configsMap),
+		Auth:  *assignAuth(configsMap),
+		Fzf:   *assignFzf(configsMap),
+		JQL:   *assignJQL(configsMap),
+		Jira:  *assignJira(configsMap),
+		User:  *assignUser(configsMap),
 	}
 }
 
@@ -67,6 +68,14 @@ func assignAlias(configsMap *RawConfigs) *AliasConfig {
 		for k, v := range (*configsMap)["alias"] {
 			partialConfig[k] = v
 		}
+	}
+	return &partialConfig
+}
+
+func assignJQL(configsMap *RawConfigs) *JQLConfig {
+	partialConfig := JQLConfig{}
+	if (*configsMap)["jql"] != nil {
+		partialConfig.CurrentWork = (*configsMap)["jql"]["currentWork"]
 	}
 	return &partialConfig
 }

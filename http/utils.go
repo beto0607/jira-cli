@@ -15,6 +15,8 @@ const transitionSuffix = "/issue/{issueId}/transitions"
 const assigneeSuffix = "/issue/{issueId}/assignee"
 const assignableUserSuffix = "/user/assignable/search?query={query}&issueKey={issueId}"
 
+const jqlSuffix = "/search/jql"
+
 func prepareHeaders(authorizationHeader string, req *http.Request) {
 	req.Header.Add("Authorization", authorizationHeader)
 	req.Header.Add("Content-Type", "application/json")
@@ -50,6 +52,12 @@ func getAssignableUserUrl(organizationName string, issueId string, query string)
 	urlSuffix = strings.Replace(urlSuffix, "{query}", query, 1)
 	fullUrl := url + urlSuffix
 	return fullUrl
+}
+
+func GetCurrentWorkQueryUrl(organizationName string, accountId string, query string) string {
+	baseUrl := getBaseUrl(organizationName)
+	suffix := jqlSuffix + "?" + getJQLForCurrentIssues(accountId, query)
+	return baseUrl + suffix
 }
 
 func GetBrowseUrl(organizationName string, issueId string) string {

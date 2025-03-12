@@ -8,6 +8,7 @@ type Configs struct {
 	Jira  JiraConfig
 	Fzf   FzfConfig
 	Alias AliasConfig
+	JQL   JQLConfig
 }
 
 type AuthConfig struct {
@@ -28,5 +29,9 @@ type FzfConfig struct {
 }
 
 type AliasConfig map[string]string
+
+type JQLConfig struct {
+	CurrentWork string
+}
 
 const defaultPath = "/jira-cli/config.conf"

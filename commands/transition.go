@@ -19,7 +19,7 @@ func RunTransitionCommand(args []string, configsValues configs.Configs) int {
 		printTransitionsHelp()
 		return 1
 	}
-	arguments := utils.FilterFlags(args)
+	arguments := utils.FilterFlags(args)[1:] // ignore first because its the command
 
 	var err error
 	var issueId string
@@ -52,6 +52,7 @@ func RunTransitionCommand(args []string, configsValues configs.Configs) int {
 		targetOption = arguments[0]
 	}
 
+	fmt.Println("Target ID: " + targetOption)
 	_, err = http.RequestTransitionTo(configsValues, issueId, targetOption)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())

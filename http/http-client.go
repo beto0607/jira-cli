@@ -136,3 +136,6 @@ func RequestQueryAssignableUser(configsValues configs.Configs, issueId string, q
 
 	return assignableUserResponse, nil
 }
+
+// func RequestQueryCurrentWork(configsValues configs.Configs, accountId string) ([]models.AssignableUser, error) {
+// }
