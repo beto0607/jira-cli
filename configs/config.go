@@ -5,6 +5,7 @@ func LoadConfig() Configs {
 	configs := convertMapToConfigs(rawConfigs)
 	return *configs
 }
+
 func GetRawValue(section string, settingName string) (value string, found bool) {
 	rawConfigs := getRawConfigs()
 
