@@ -7,10 +7,6 @@ import (
 	"regexp"
 )
 
-func ShouldPrintHelp(args []string) bool {
-	return IsFlagInArgs(args, "--help") || IsFlagInArgs(args, "help")
-}
-
 func GetIssueIdFromBranch() (string, error) {
 	branchName, err := getBranchName()
 	if err != nil {
