@@ -15,7 +15,8 @@ Some inspiration came from [gh cli](https://github.com/cli/cli)
 
 ### Requires
 
-- [Go](https://go.dev/dl/) version 1.23
+- [Go](https://go.dev/dl/) version 1.25
+- [fzf](https://github.com/junegunn/fzf) if enabled
 
 ### Build
 
@@ -39,7 +40,7 @@ This tool expects a file in `$XDG_CONFIG_HOME/jira-cli/config.conf` (or
 [jira]
     organization = "<YOUR_ORGANIZATION>"
 [fzf]
-    enabled = "<on |off>"
+    enabled = "<on | off>"
 [alias]
     move = "transition -g -s"
 ```
@@ -50,10 +51,3 @@ Use `jira-cli config set ...` for updating your configurations
 - How to get your Account ID? Go to your profile, the URL will be something like:
   `https://your-project.atlassian.net/jira/people/<YOUR_ACCOUNT_ID>` <- Copy it
 - How to get your email? 🤔 🤷
-
-## FZF
-
-You can use [fzf](https://github.com/junegunn/fzf) for searching, for example,
-transitions or assignees. If disabled, it will use some custom prompting.
-
-Enable by running `jira-cli config set fzf.enabled on`.
